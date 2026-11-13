@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de contratación | TechSolutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-dashboard-body">
+
+<div class="ts-dashboard">
+
+    <aside class="ts-sidebar">
+
+        <a href="{{ url_for('inicio') }}" class="ts-sidebar-logo">
+            T+ <span>TechSolutions</span>
+        </a>
+
+        <div class="ts-sidebar-grupo">
+            <p>MI CUENTA</p>
+
+            <a href="{{ url_for('panel_cliente') }}">
+                ▦ Mi panel
+            </a>
+
+            <a href="{{ url_for('mis_contrataciones') }}" class="activo">
+                ◈ Mis contrataciones
+            </a>
+
+            <a href="{{ url_for('cotizacion') }}">
+                + Nueva cotización
+            </a>
+
+            <a href="{{ url_for('inicio') }}">
+                ⌂ Página principal
+            </a>
+            
+            <a href="{{ url_for('notificaciones') }}">
+                ♧ Notificaciones
+
+                {% if notificaciones_pendientes > 0 %}
+                    <span class="ts-notificaciones-contador">
+                        {{ notificaciones_pendientes }}
+                    </span>
+                {% endif %}
+            </a>
+
+        </div>
+
+        <div class="ts-sidebar-abajo">
+            <span>Cuenta de cliente</span>
+            <strong>{{ session.get("nombre") }}</strong>
+
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit">Cerrar sesión ↗</button>
+            </form>
+        </div>
+
+    </aside>
+
+    <main class="ts-dashboard-main">
+
+        <div class="ts-dashboard-superior">
+            <div>
+                <span class="ts-dashboard-etiqueta">
+                    SEGUIMIENTO DE SERVICIO
+                </span>
+
+                <h1>Detalle de contratación</h1>
+
+                <p>
+                    Consulta la información y el progreso de tu servicio.
+                </p>
+            </div>
+        </div>
+
+        <a href="{{ url_for('mis_contrataciones') }}"
+           class="ts-detalle-volver">
+            ← Volver a mis contrataciones
+        </a>
+
+        <div class="ts-detalle-contratacion">
+
+            <div class="ts-detalle-imagen">
+                <img
+                    src="{{ servicio['imagenes'][0] }}"
+                    alt="{{ servicio['nombre'] }}"
+                >
+            </div>
+
+            <div class="ts-detalle-contenido">
+
+                <span class="ts-contratacion-confirmada">
+                    ✓ CONTRATACIÓN CONFIRMADA
+                </span>
+
+                <h2>{{ servicio["nombre"] }}</h2>
+
+                <p>{{ servicio["descripcion"] }}</p>
+
+                <div class="ts-detalle-datos">
+                    <div>
+                        <span>Número de folio</span>
+                        <strong>#{{ contratacion["id"] }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Fecha de solicitud</span>
+                        <strong>{{ contratacion["fecha"] }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Cliente</span>
+                        <strong>{{ contratacion["nombre"] }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Estado actual</span>
+                        <strong>{{ contratacion["estado"] }}</strong>
+                    </div>
+                </div>
+
+                <div class="ts-detalle-precio">
+                    <span>Precio acordado</span>
+                    <strong>
+                        ${{ "%.2f"|format(contratacion["precio"]) }} MXN
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        <section class="ts-dashboard-seccion">
+
+            <h2>Seguimiento del servicio</h2>
+
+
+            <p class="ts-detalle-descripcion">
+                Revisa en qué etapa se encuentra tu contratación.
+            </p>
+
+            <div class="ts-seguimiento">
+
+                <div class="ts-seguimiento-paso completado">
+                    <span>✓</span>
+                    <strong>Contratado</strong>
+                    <small>Cotización aceptada</small>
+                </div>
+
+                <div class="ts-seguimiento-paso
+                    {% if contratacion['estado'] in ['En proceso', 'Finalizada'] %}
+                        completado
+                    {% endif %}
+                ">
+                    <span>2</span>
+                    <strong>En proceso</strong>
+                    <small>Servicio en atención</small>
+                </div>
+
+                <div class="ts-seguimiento-paso
+                    {% if contratacion['estado'] == 'Finalizada' %}
+                        completado
+                    {% endif %}
+                ">
+                    <span>3</span>
+                    <strong>Finalizado</strong>
+                    <small>Trabajo terminado</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+<!-- HISTORIAL DE MOVIMIENTOS -->
+<section class="ts-dashboard-seccion">
+
+    <h2>Historial de movimientos</h2>
+
+    <p class="ts-detalle-descripcion">
+        Consulta las fechas de cada etapa de tu servicio.
+    </p>
+
+    <div class="ts-historial">
+
+        <!-- CONTRATACIÓN ACEPTADA -->
+        <div class="ts-historial-item">
+
+            <div class="ts-historial-icono completado">
+                ✓
+            </div>
+
+            <div class="ts-historial-info">
+
+                <h3>Cotización aceptada</h3>
+
+                <p>
+                    Confirmaste la contratación de este servicio.
+                </p>
+
+                <span>
+                    {% if contratacion["fecha_aceptacion"] %}
+                        {{ contratacion["fecha_aceptacion"] }} UTC
+                    {% else %}
+                        Fecha no registrada
+                    {% endif %}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICIO INICIADO -->
+        <div class="ts-historial-item">
+
+            <div class="ts-historial-icono
+                {% if contratacion['fecha_inicio'] %}
+                    completado
+                {% endif %}
+            ">
+                {% if contratacion["fecha_inicio"] %}
+                    ✓
+                {% else %}
+                    2
+                {% endif %}
+            </div>
+
+            <div class="ts-historial-info">
+
+                <h3>Servicio iniciado</h3>
+
+                <p>
+                    El administrador comenzó a trabajar en tu servicio.
+                </p>
+
+                <span>
+                    {% if contratacion["fecha_inicio"] %}
+                        {{ contratacion["fecha_inicio"] }} UTC
+                    {% else %}
+                        Pendiente de iniciar
+                    {% endif %}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICIO FINALIZADO -->
+        <div class="ts-historial-item">
+
+            <div class="ts-historial-icono
+                {% if contratacion['fecha_finalizacion'] %}
+                    completado
+                {% endif %}
+            ">
+                {% if contratacion["fecha_finalizacion"] %}
+                    ✓
+                {% else %}
+                    3
+                {% endif %}
+            </div>
+
+            <div class="ts-historial-info">
+
+                <h3>Servicio finalizado</h3>
+
+                <p>
+                    TechSolutions terminó el trabajo contratado.
+                </p>
+
+                <span>
+                    {% if contratacion["fecha_finalizacion"] %}
+                        {{ contratacion["fecha_finalizacion"] }} UTC
+                    {% else %}
+                        Pendiente de finalizar
+                    {% endif %}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+        <section class="ts-dashboard-seccion">
+
+            <h2>Detalles de tu solicitud</h2>
+
+            <p class="ts-detalle-descripcion">
+                {{ contratacion["descripcion"] }}
+            </p>
+
+            <h3>¿Qué incluye este servicio?</h3>
+
+            <ul class="ts-detalle-incluye">
+                {% for elemento in servicio["incluye"] %}
+                    <li>✓ {{ elemento }}</li>
+                {% endfor %}
+            </ul>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

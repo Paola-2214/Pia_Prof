@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechSolutions | Tecnología que impulsa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body class="pagina-inicio">
+
+<header class="ts-header">
+    <a href="/" class="ts-logo">
+        <span class="ts-logo-icono">T<span>+</span></span>
+        TechSolutions
+    </a>
+
+    <nav class="ts-menu">
+        <a href="#inicio">Inicio</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#contacto">Contacto</a>
+    </nav>
+
+    <div class="ts-cuenta">
+        {% if session.get("usuario_id") %}
+            <span class="ts-saludo">Hola, {{ session.get("nombre") }}</span>
+
+            {% if session.get("rol") == "cliente" %}
+                <a href="{{ url_for('panel_cliente') }}" class="ts-enlace">
+                    Mi cuenta
+                </a>
+            {% endif %}
+
+            {% if session.get("rol") == "admin" %}
+                <a href="/admin" class="ts-enlace">Panel admin</a>
+            {% endif %}
+            <form action="/logout" method="POST">
+                <button class="ts-boton-salir" type="submit">Salir</button>
+            </form>
+        {% else %}
+            <a href="/login" class="ts-enlace">Iniciar sesión</a>
+            <a href="/registro" class="ts-boton-pequeno">Crear cuenta</a>
+        {% endif %}
+    </div>
+</header>
+
+<main>
+    <section class="ts-hero" id="inicio">
+        <div class="ts-hero-texto">
+            <div class="ts-etiqueta">
+                <span class="ts-punto"></span>
+                SOLUCIONES DIGITALES
+            </div>
+
+            <h1>La tecnología no debería <em>detenerte.</em></h1>
+
+            <p>
+                Mantenimiento, desarrollo web y conectividad.
+                Tres soluciones tecnológicas diseñadas para
+                personas, emprendedores y empresas.
+            </p>
+
+            <div class="ts-acciones">
+                <a href="#servicios" class="ts-boton-principal">
+                    Explorar soluciones <span>↗</span>
+                </a>
+                <a href="/cotizacion" class="ts-boton-secundario">
+                    Solicitar cotización
+                </a>
+            </div>
+
+            <div class="ts-indicadores">
+                <div>
+                    <strong>03</strong>
+                    <span>Servicios especializados</span>
+                </div>
+                <div>
+                    <strong>01</strong>
+                    <span>Plataforma digital</span>
+                </div>
+                <div>
+                    <strong>100%</strong>
+                    <span>Enfoque personalizado</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ts-hero-visual">
+            <div class="ts-orbita ts-orbita-uno"></div>
+            <div class="ts-orbita ts-orbita-dos"></div>
+
+            <div class="ts-panel-visual">
+                <div class="ts-panel-superior">
+                    <span class="ts-luces">● ● ●</span>
+                    <span>TECH / SYSTEM</span>
+                </div>
+
+                <div class="ts-panel-contenido">
+                    <div class="ts-simbolo">T<span>+</span></div>
+                    <div class="ts-linea"></div>
+                    <p>Innovación y conectividad</p>
+                    <h3>Tu próximo nivel digital.</h3>
+                </div>
+
+                <div class="ts-panel-inferior">
+                    <span>● SISTEMA ACTIVO</span>
+                    <span>TECHSOLUTIONS</span>
+                </div>
+            </div>
+
+            <div class="ts-flotante ts-flotante-uno">
+                <span>⚡</span> Soporte tecnológico
+            </div>
+
+            <div class="ts-flotante ts-flotante-dos">
+                <span>✦</span> Soluciones a medida
+            </div>
+        </div>
+    </section>
+
+    <section class="ts-servicios" id="servicios">
+        <div class="ts-titulo-seccion">
+            <div>
+                <span class="ts-subtitulo">QUÉ HACEMOS</span>
+                <h2>Soluciones para cada desafío.</h2>
+            </div>
+            <p>
+                Servicios tecnológicos que se adaptan a las
+                necesidades de nuestros clientes.
+            </p>
+        </div>
+
+        <div class="ts-bento">
+            <article class="ts-servicio ts-servicio-grande">
+                <img
+                    src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1200&q=85"
+                    alt="Mantenimiento de computadoras">
+
+                <div class="ts-servicio-contenido">
+                    <span>01 / SOPORTE TÉCNICO</span>
+                    <h3>Mantenimiento de computadoras</h3>
+                    <p>
+                        Diagnóstico, limpieza, reparación y
+                        optimización de equipos de cómputo.
+                    </p>
+                    <a href="{{ url_for('detalle_servicio', slug='mantenimiento') }}">Ver servicio ↗</a>
+                </div>
+            </article>
+
+            <article class="ts-servicio">
+                <img
+                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85"
+                    alt="Desarrollo de sitios web">
+
+                <div class="ts-servicio-contenido">
+                    <span>02 / DESARROLLO DIGITAL</span>
+                    <h3>Desarrollo de páginas web</h3>
+                    <p>Sitios modernos y adaptables para negocios.</p>
+                    <a href="{{ url_for('detalle_servicio', slug='desarrollo-web') }}">Ver servicio ↗</a>
+                </div>
+            </article>
+
+            <article class="ts-servicio">
+                <img
+                    src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=85"
+                    alt="Infraestructura de redes">
+
+                <div class="ts-servicio-contenido">
+                    <span>03 / CONECTIVIDAD</span>
+                    <h3>Instalación y configuración de redes</h3>
+                    <p>Conectividad Wi-Fi y cableada para hogares y empresas.</p>
+                    <a href="{{ url_for('detalle_servicio', slug='redes') }}">Ver servicio ↗</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="ts-nosotros" id="nosotros">
+        <div class="ts-nosotros-numero">T+</div>
+
+        <div>
+            <span class="ts-subtitulo">SOBRE NOSOTROS</span>
+            <h2>Tecnología útil. Soluciones reales.</h2>
+            <p>
+                TechSolutions es una propuesta de empresa de
+                tecnologías de la información enfocada en
+                brindar servicios accesibles y personalizados.
+                Buscamos ayudar a personas y negocios a
+                aprovechar mejor sus herramientas digitales.
+            </p>
+        </div>
+    </section>
+
+    <section class="ts-contacto" id="contacto">
+        <div>
+            <span class="ts-subtitulo">COMENCEMOS</span>
+            <h2>¿Tienes un proyecto en mente?</h2>
+            <p>Cuéntanos qué necesitas y solicita una cotización.</p>
+        </div>
+
+        <a href="/cotizacion" class="ts-boton-principal">
+            Solicitar cotización ↗
+        </a>
+    </section>
+</main>
+
+<footer class="ts-footer">
+    <strong>TechSolutions</strong>
+    <span>© 2026 · Proyecto académico</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta | TechSolutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-auth-body">
+
+<main class="ts-auth-layout">
+
+    <section class="ts-auth-visual">
+        <a href="/" class="ts-auth-logo">
+            <span>T+</span> TechSolutions
+        </a>
+
+        <div class="ts-auth-presentacion">
+            <div class="ts-auth-etiqueta">
+                <span class="ts-punto"></span>
+                ÚNETE A TECHSOLUTIONS
+            </div>
+
+            <h1>Tu próximo paso hacia la <em>innovación.</em></h1>
+
+            <p>
+                Crea tu cuenta y descubre soluciones tecnológicas
+                para tus proyectos, equipos y negocios.
+            </p>
+
+            <div class="ts-auth-grafico">
+                <div class="ts-auth-circulo circulo-uno"></div>
+                <div class="ts-auth-circulo circulo-dos"></div>
+                <div class="ts-auth-centro">T+</div>
+
+                <div class="ts-auth-mini mini-uno">
+                    ✦ Soluciones personalizadas
+                </div>
+
+                <div class="ts-auth-mini mini-dos">
+                    ⚡ Tecnología a tu alcance
+                </div>
+            </div>
+        </div>
+
+        <div class="ts-auth-pie">
+            © 2026 TechSolutions · Proyecto académico
+        </div>
+    </section>
+
+    <section class="ts-auth-formulario">
+        <div class="ts-auth-superior">
+            <a href="/">← Volver al inicio</a>
+        </div>
+
+        <div class="ts-auth-contenido">
+            <div class="ts-auth-icono">✦</div>
+
+            <span class="ts-auth-subtitulo">COMIENZA AQUÍ</span>
+
+            <h2>Crea tu cuenta</h2>
+
+            <p>Regístrate para acceder a los servicios de TechSolutions.</p>
+
+            {% if mensaje %}
+                <div class="{{ 'mensaje-registro' if exito else 'mensaje-error' }}">
+                    {{ mensaje }}
+                </div>
+            {% endif %}
+
+            {% if not exito %}
+                <form action="/registro" method="POST" class="ts-auth-form">
+
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" id="nombre" name="nombre"
+                           placeholder="Tu nombre completo"
+                           autocomplete="name" required>
+
+                    <label for="correo">Correo electrónico</label>
+                    <input type="email" id="correo" name="correo"
+                           placeholder="ejemplo@correo.com"
+                           autocomplete="email" required>
+
+                    <label for="contrasena">Contraseña</label>
+                    <input type="password" id="contrasena" name="contrasena"
+                           placeholder="Mínimo 8 caracteres"
+                           minlength="8"
+                           autocomplete="new-password" required>
+
+                    <button type="submit" class="ts-auth-boton">
+                        Crear cuenta <span>→</span>
+                    </button>
+
+                </form>
+            {% else %}
+                <a href="/login" class="ts-auth-boton ts-auth-enlace-boton">
+                    Ir a iniciar sesión <span>→</span>
+                </a>
+            {% endif %}
+
+            <div class="ts-auth-registro">
+                ¿Ya tienes una cuenta?
+                <a href="/login">Inicia sesión</a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

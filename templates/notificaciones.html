@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notificaciones | TechSolutions</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-dashboard-body">
+
+<div class="ts-dashboard">
+
+    <aside class="ts-sidebar">
+
+        <a href="{{ url_for('inicio') }}" class="ts-sidebar-logo">
+            T+ <span>TechSolutions</span>
+        </a>
+
+        <div class="ts-sidebar-grupo">
+
+            <p>MI CUENTA</p>
+
+            <a href="{{ url_for('panel_cliente') }}">
+                ▦ Mi panel
+            </a>
+
+            <a href="{{ url_for('mis_contrataciones') }}">
+                ◈ Mis contrataciones
+            </a>
+
+            <a href="{{ url_for('notificaciones') }}" class="activo">
+                ♧ Notificaciones
+
+                {% if no_leidas > 0 %}
+                    <span class="ts-notificaciones-contador">
+                        {{ no_leidas }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <a href="{{ url_for('cotizacion') }}">
+                + Nueva cotización
+            </a>
+
+            <a href="{{ url_for('inicio') }}">
+                ⌂ Página principal
+            </a>
+
+        </div>
+
+        <div class="ts-sidebar-abajo">
+
+            <span>Cuenta de cliente</span>
+
+            <strong>{{ session.get("nombre") }}</strong>
+
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit">
+                    Cerrar sesión ↗
+                </button>
+            </form>
+
+        </div>
+
+    </aside>
+
+    <main class="ts-dashboard-main">
+
+        <div class="ts-dashboard-superior">
+
+            <div>
+                <span class="ts-dashboard-etiqueta">
+                    CENTRO DE NOTIFICACIONES
+                </span>
+
+                <h1>Mis notificaciones</h1>
+
+                <p>
+                    Consulta las novedades y actualizaciones
+                    de tus servicios contratados.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="ts-dashboard-seccion">
+
+            <div class="ts-notificaciones-encabezado">
+
+                <h2>Actividad reciente</h2>
+
+                <span class="ts-notificaciones-resumen">
+                    {{ no_leidas }} sin leer
+                </span>
+
+            </div>
+
+            {% if avisos %}
+
+                <div class="ts-notificaciones-lista">
+
+                    {% for aviso in avisos %}
+
+                        <article class="ts-notificacion
+                            {% if aviso['leida'] == 0 %}
+                                ts-notificacion-nueva
+                            {% endif %}
+                        ">
+
+                            <div class="ts-notificacion-icono">
+                                {% if "finalizado" in aviso["titulo"].lower() %}
+                                    ✓
+                                {% else %}
+                                    ↗
+                                {% endif %}
+                            </div>
+
+                            <div class="ts-notificacion-contenido">
+
+                                <div class="ts-notificacion-superior">
+
+                                    <h3>{{ aviso["titulo"] }}</h3>
+
+                                    {% if aviso["leida"] == 0 %}
+                                        <span class="ts-notificacion-badge">
+                                            Nueva
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+                                <p>{{ aviso["mensaje"] }}</p>
+
+                                <span class="ts-notificacion-fecha">
+                                    {{ aviso["fecha"] }} UTC
+                                </span>
+
+
+                                {% if aviso["leida"] == 0 %}
+
+                                    <form
+                                        action="{{ url_for('marcar_notificacion_leida', notificacion_id=aviso['id']) }}"
+                                        method="POST"
+                                        class="ts-notificacion-formulario"
+                                    >
+                                        <button type="submit" class="ts-notificacion-leer">
+                                            ✓ Marcar como leída
+                                        </button>
+                                    </form>
+
+                                {% else %}
+
+                                    <span class="ts-notificacion-ya-leida">
+                                        ✓ Leída
+                                    </span>
+
+                                {% endif %}
+
+
+                                
+                                {% if aviso["cotizacion_id"] %}
+
+                                    {% if "propuesta de precio" in aviso["titulo"].lower() %}
+
+                                        <a href="{{ url_for('panel_cliente') }}"
+                                        class="ts-notificacion-enlace">
+                                            Ver propuesta de precio →
+                                        </a>
+
+                                    {% else %}
+
+                                        <a href="{{ url_for('detalle_contratacion', cotizacion_id=aviso['cotizacion_id']) }}"
+                                        class="ts-notificacion-enlace">
+                                            Ver detalles del servicio →
+                                        </a>
+
+                                    {% endif %}
+
+                                {% endif %}
+
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="ts-notificaciones-vacio">
+
+                    <div class="ts-notificaciones-vacio-icono">
+                        ♧
+                    </div>
+
+                    <h3>Todavía no tienes notificaciones</h3>
+
+                    <p>
+                        Aquí aparecerán las actualizaciones
+                        de tus servicios contratados.
+                    </p>
+
+                    <a href="{{ url_for('mis_contrataciones') }}"
+                       class="ts-boton-ver-detalle">
+                        Ver mis contrataciones →
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

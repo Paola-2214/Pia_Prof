@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi cuenta | TechSolutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-dashboard-body">
+
+<div class="ts-dashboard">
+
+    <aside class="ts-sidebar">
+
+        <a href="/" class="ts-sidebar-logo">
+            T+ <span>TechSolutions</span>
+        </a>
+
+        <div class="ts-sidebar-grupo">
+            <p>MI CUENTA</p>
+
+            <a href="{{ url_for('panel_cliente') }}" class="activo">
+                ▦ Mi panel
+            </a>
+
+            <a href="{{ url_for('panel_cliente') }}#mis-cotizaciones">
+                ▤ Mis cotizaciones
+            </a>
+
+            <a href="{{ url_for('mis_contrataciones') }}">
+                ◈ Mis contrataciones
+            </a>
+
+            <a href="{{ url_for('cotizacion') }}">
+                + Nueva cotización
+            </a>
+
+            <a href="{{ url_for('inicio') }}">
+                ⌂ Página principal
+            </a>
+
+            
+            <a href="{{ url_for('notificaciones') }}">
+                ♧ Notificaciones
+
+                {% if notificaciones_pendientes > 0 %}
+                    <span class="ts-notificaciones-contador">
+                        {{ notificaciones_pendientes }}
+                    </span>
+                {% endif %}
+            </a>
+
+        </div>
+
+        <div class="ts-sidebar-abajo">
+            <span>Cuenta de cliente</span>
+            <strong>{{ session.get("nombre") }}</strong>
+
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit">Cerrar sesión ↗</button>
+            </form>
+        </div>
+
+    </aside>
+
+    <main class="ts-dashboard-main">
+
+        <div class="ts-dashboard-superior">
+
+            <div>
+                <span class="ts-dashboard-etiqueta">
+                    ÁREA DE CLIENTES
+                </span>
+
+                <h1>Mi espacio</h1>
+
+                <p>
+                    Hola, {{ session.get("nombre") }}.
+                    Consulta tus solicitudes, precios y contrataciones.
+                </p>
+            </div>
+
+            <a href="{{ url_for('cotizacion') }}" class="ts-cliente-boton">
+                + Nueva cotización
+            </a>
+
+        </div>
+
+
+        <!-- ESTADÍSTICAS -->
+        <div class="ts-dashboard-metricas">
+
+            <div class="ts-metrica">
+                <span>Mis solicitudes</span>
+                <strong>{{ total_cotizaciones }}</strong>
+                <small>Cotizaciones registradas</small>
+            </div>
+
+            <div class="ts-metrica">
+                <span>Pendientes</span>
+                <strong>{{ pendientes }}</strong>
+                <small>Esperando revisión</small>
+            </div>
+
+            <div class="ts-metrica">
+                <span>En proceso</span>
+                <strong>{{ en_proceso }}</strong>
+                <small>Solicitudes en atención</small>
+            </div>
+
+        </div>
+
+
+        <!-- SEGUIMIENTO -->
+        <div class="ts-dashboard-seccion">
+
+            <div class="ts-dashboard-titulo">
+                <div>
+                    <h2>Seguimiento de solicitudes</h2>
+                    <p>Conoce el avance de tus servicios.</p>
+                </div>
+
+                <span>{{ finalizadas }} finalizadas</span>
+            </div>
+
+            <div class="ts-cliente-resumen">
+
+                <div>
+                    <span class="ts-cliente-punto pendiente"></span>
+                    <span>Pendientes</span>
+                    <strong>{{ pendientes }}</strong>
+                </div>
+
+                <div>
+                    <span class="ts-cliente-punto proceso"></span>
+                    <span>En proceso</span>
+                    <strong>{{ en_proceso }}</strong>
+                </div>
+
+                <div>
+                    <span class="ts-cliente-punto finalizada"></span>
+                    <span>Finalizadas</span>
+                    <strong>{{ finalizadas }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COTIZACIONES -->
+        <div class="ts-dashboard-seccion" id="mis-cotizaciones">
+
+            <div class="ts-dashboard-titulo">
+
+                <div>
+                    <h2>Mis cotizaciones</h2>
+                    <p>
+                        Consulta los precios propuestos y decide
+                        si deseas contratar el servicio.
+                    </p>
+                </div>
+
+                <span>{{ total_cotizaciones }} solicitudes</span>
+
+            </div>
+
+
+            {% if cotizaciones %}
+
+            <div class="ts-dashboard-tabla">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Folio</th>
+                            <th>Servicio</th>
+                            <th>Descripción</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Precio</th>
+                            <th>Contratación</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for cotizacion in cotizaciones %}
+
+                        <tr>
+
+                            <td>#{{ cotizacion["id"] }}</td>
+
+                            <td>{{ cotizacion["servicio"] }}</td>
+
+                            <td>{{ cotizacion["descripcion"] }}</td>
+
+                            <td>{{ cotizacion["fecha"] }}</td>
+
+                            <td>
+                                {% if cotizacion["estado"] == "Pendiente" %}
+                                    <span class="ts-cliente-estado ts-estado-pendiente">
+                                        ● Pendiente
+                                    </span>
+
+                                {% elif cotizacion["estado"] == "En proceso" %}
+                                    <span class="ts-cliente-estado ts-estado-proceso">
+                                        ● En proceso
+                                    </span>
+
+                                {% elif cotizacion["estado"] == "Finalizada" %}
+                                    <span class="ts-cliente-estado ts-estado-finalizada">
+                                        ● Finalizada
+                                    </span>
+
+                                {% else %}
+                                    {{ cotizacion["estado"] }}
+                                {% endif %}
+                            </td>
+
+
+                            <!-- PRECIO -->
+                            <td>
+
+                                {% if cotizacion["precio"] is not none %}
+
+                                    <strong class="ts-precio-cliente">
+                                        ${{ "%.2f"|format(cotizacion["precio"]) }} MXN
+                                    </strong>
+
+                                {% else %}
+
+                                    <span class="ts-precio-espera">
+                                        Esperando precio
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- CONTRATACIÓN -->
+                            <td>
+
+                                {% if cotizacion["decision"] == "Aceptada" %}
+
+                                    <span class="ts-decision-aceptada">
+                                        ✓ Servicio contratado
+                                    </span>
+
+                                {% elif cotizacion["decision"] == "Rechazada" %}
+
+                                    <span class="ts-decision-rechazada">
+                                        ✕ Cotización rechazada
+                                    </span>
+
+                                {% elif cotizacion["precio"] is not none %}
+
+                                    <div class="ts-acciones-cotizacion">
+
+                                        <form
+                                            action="{{ url_for('decidir_cotizacion', cotizacion_id=cotizacion['id']) }}"
+                                            method="POST"
+                                        >
+                                            <input type="hidden" name="decision" value="Aceptada">
+
+                                            <button type="submit" class="ts-boton-aceptar">
+                                                Aceptar
+                                            </button>
+                                        </form>
+
+                                        <form
+                                            action="{{ url_for('decidir_cotizacion', cotizacion_id=cotizacion['id']) }}"
+                                            method="POST"
+                                        >
+                                            <input type="hidden" name="decision" value="Rechazada">
+
+                                            <button type="submit" class="ts-boton-rechazar">
+                                                Rechazar
+                                            </button>
+                                        </form>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <span class="ts-precio-espera">
+                                        Pendiente de propuesta
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="ts-cliente-vacio">
+
+                <div class="ts-cliente-vacio-icono">▤</div>
+
+                <h3>Aún no tienes cotizaciones</h3>
+
+                <p>
+                    Cuando solicites un servicio, podrás consultar
+                    su estado y seguimiento desde aquí.
+                </p>
+
+                <a href="{{ url_for('cotizacion') }}" class="ts-cliente-boton">
+                    Solicitar mi primera cotización ↗
+                </a>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

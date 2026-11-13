@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión | TechSolutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-auth-body">
+
+<main class="ts-auth-layout">
+
+    <section class="ts-auth-visual">
+        <a href="/" class="ts-auth-logo">
+            <span>T+</span> TechSolutions
+        </a>
+
+        <div class="ts-auth-presentacion">
+            <div class="ts-auth-etiqueta">
+                <span class="ts-punto"></span>
+                TU ESPACIO DIGITAL
+            </div>
+
+            <h1>Conecta con nuevas <em>soluciones.</em></h1>
+
+            <p>
+                Gestiona tus solicitudes y accede a nuestros
+                servicios tecnológicos desde un solo lugar.
+            </p>
+
+            <div class="ts-auth-grafico">
+                <div class="ts-auth-circulo circulo-uno"></div>
+                <div class="ts-auth-circulo circulo-dos"></div>
+                <div class="ts-auth-centro">T+</div>
+
+                <div class="ts-auth-mini mini-uno">
+                    <span>●</span> Sistema conectado
+                </div>
+
+                <div class="ts-auth-mini mini-dos">
+                    ⚡ Soluciones digitales
+                </div>
+            </div>
+        </div>
+
+        <div class="ts-auth-pie">
+            © 2026 TechSolutions · Proyecto académico
+        </div>
+    </section>
+
+    <section class="ts-auth-formulario">
+        <div class="ts-auth-superior">
+            <a href="/">← Volver al inicio</a>
+        </div>
+
+        <div class="ts-auth-contenido">
+            <div class="ts-auth-icono">↗</div>
+
+            <span class="ts-auth-subtitulo">BIENVENIDO DE NUEVO</span>
+
+            <h2>Inicia sesión</h2>
+
+            <p>
+                Ingresa tus datos para acceder a tu cuenta.
+            </p>
+
+            {% if mensaje %}
+                <div class="mensaje-error">
+                    {{ mensaje }}
+                </div>
+            {% endif %}
+
+            <form action="/login" method="POST" class="ts-auth-form">
+
+                <label for="correo">Correo electrónico</label>
+                <input
+                    type="email"
+                    id="correo"
+                    name="correo"
+                    placeholder="ejemplo@correo.com"
+                    autocomplete="email"
+                    required>
+
+                <label for="contrasena">Contraseña</label>
+                <input
+                    type="password"
+                    id="contrasena"
+                    name="contrasena"
+                    placeholder="Ingresa tu contraseña"
+                    autocomplete="current-password"
+                    required>
+
+                <button type="submit" class="ts-auth-boton">
+                    Iniciar sesión <span>→</span>
+                </button>
+
+            </form>
+
+            <div class="ts-auth-registro">
+                ¿Todavía no tienes una cuenta?
+                <a href="/registro">Regístrate aquí</a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

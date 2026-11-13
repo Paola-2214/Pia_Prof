@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | TechSolutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-dashboard-body">
+
+<div class="ts-dashboard">
+
+    <!-- MENÚ LATERAL -->
+    <aside class="ts-sidebar">
+
+        <a href="/" class="ts-sidebar-logo">
+            T+ <span>TechSolutions</span>
+        </a>
+
+        <div class="ts-sidebar-grupo">
+            <p>GENERAL</p>
+
+            <a href="/admin" class="activo">
+                ▦ Dashboard
+            </a>
+
+            <a href="{{ url_for('administrador') }}#solicitudes">
+                ▤ Cotizaciones
+            </a>
+
+            <a href="{{ url_for('notificaciones_admin') }}">
+                ♧ Notificaciones
+                {% if notificaciones_admin_pendientes > 0 %}
+                    <span class="ts-admin-contador">
+                        {{ notificaciones_admin_pendientes }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <a href="/">
+                ⌂ Página principal
+            </a>
+        </div>
+
+        <div class="ts-sidebar-abajo">
+
+            <span>Administrador</span>
+
+            <strong>{{ session.get("nombre") }}</strong>
+
+            <form action="/logout" method="POST">
+                <button type="submit">
+                    Cerrar sesión ↗
+                </button>
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="ts-dashboard-main">
+
+        <!-- ENCABEZADO -->
+        <div class="ts-dashboard-superior">
+
+            <div>
+                <span class="ts-dashboard-etiqueta">
+                    PANEL DE CONTROL
+                </span>
+
+                <h1>Resumen general</h1>
+
+                <p>
+                    Bienvenido, {{ session.get("nombre") }}.
+                    Aquí puedes consultar la actividad de TechSolutions.
+                </p>
+            </div>
+
+            <span class="ts-dashboard-estado">
+                ● Sistema activo
+            </span>
+
+        </div>
+
+
+        <!-- ESTADÍSTICAS GENERALES -->
+        <div class="ts-dashboard-metricas">
+
+            <div class="ts-metrica">
+                <span>Solicitudes recibidas</span>
+                <strong>{{ total_cotizaciones }}</strong>
+                <small>Total de cotizaciones</small>
+            </div>
+
+            <div class="ts-metrica">
+                <span>Clientes registrados</span>
+                <strong>{{ total_clientes }}</strong>
+                <small>Cuentas de clientes</small>
+            </div>
+
+            <div class="ts-metrica">
+                <span>Servicios disponibles</span>
+                <strong>03</strong>
+                <small>Catálogo TechSolutions</small>
+            </div>
+
+        </div>
+
+
+        <!-- ESTADÍSTICAS POR SERVICIO -->
+        <div class="ts-dashboard-seccion">
+
+            <h2>Solicitudes por servicio</h2>
+
+            <div class="ts-dashboard-servicios">
+
+                <div>
+                    <span>💻 Mantenimiento</span>
+                    <strong>{{ total_mantenimiento }}</strong>
+                </div>
+
+                <div>
+                    <span>🌐 Desarrollo web</span>
+                    <strong>{{ total_web }}</strong>
+                </div>
+
+                <div>
+                    <span>📡 Redes</span>
+                    <strong>{{ total_redes }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLA DE COTIZACIONES -->
+        <div class="ts-dashboard-seccion" id="solicitudes">
+
+            <div class="ts-dashboard-titulo">
+
+                <div>
+                    <h2>Cotizaciones recibidas</h2>
+
+                    <p>
+                        Consulta las solicitudes, asigna precios,
+                        administra sus estados y revisa las contrataciones.
+                    </p>
+                </div>
+
+                <span>
+                    {{ total_cotizaciones }} solicitudes
+                </span>
+
+            </div>
+
+
+            <div class="ts-dashboard-tabla">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Correo</th>
+                            <th>Servicio</th>
+                            <th>Descripción</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Precio propuesto</th>
+                            <th>Contratación</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for cotizacion in cotizaciones %}
+
+                        <tr>
+
+                            <!-- ID -->
+                            <td>
+                                #{{ cotizacion["id"] }}
+                            </td>
+
+
+                            <!-- CLIENTE -->
+                            <td>
+                                {{ cotizacion["nombre"] }}
+                            </td>
+
+
+                            <!-- CORREO -->
+                            <td>
+                                {{ cotizacion["correo"] }}
+                            </td>
+
+
+                            <!-- SERVICIO -->
+                            <td>
+                                {{ cotizacion["servicio"] }}
+                            </td>
+
+
+                            <!-- DESCRIPCIÓN -->
+                            <td>
+                                {{ cotizacion["descripcion"] }}
+                            </td>
+
+
+                            <!-- FECHA -->
+                            <td>
+                                {{ cotizacion["fecha"] }}
+                            </td>
+
+
+                            <!-- CAMBIAR ESTADO -->
+                            <td>
+
+                                {% if cotizacion["estado"] == "Finalizada" %}
+
+                                    <span class="ts-estado-finalizado">
+                                        ✓ Finalizada
+                                    </span>
+
+                                {% elif cotizacion["decision"] == "Rechazada" %}
+
+                                    <span class="ts-estado-bloqueado">
+                                        ✕ Servicio rechazado
+                                    </span>
+
+                                {% elif cotizacion["decision"] != "Aceptada" %}
+
+                                    <span class="ts-estado-espera">
+                                        ◷ Pendiente
+                                    </span>
+
+                                    <small class="ts-estado-ayuda">
+                                        Esperando aceptación del cliente
+                                    </small>
+
+                                {% else %}
+
+                                    <form
+                                        action="{{ url_for('cambiar_estado', cotizacion_id=cotizacion['id']) }}"
+                                        method="POST"
+                                        class="ts-formulario-estado"
+                                    >
+
+                                        <select name="estado" class="ts-select-estado">
+
+                                            {% if cotizacion["estado"] == "Pendiente" %}
+
+                                                <option value="En proceso">
+                                                    Iniciar servicio
+                                                </option>
+
+                                            {% elif cotizacion["estado"] == "En proceso" %}
+
+                                                <option value="Finalizada">
+                                                    Finalizar servicio
+                                                </option>
+
+                                            {% endif %}
+
+                                        </select>
+
+                                        <button type="submit" class="ts-guardar-estado">
+                                            Actualizar
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ASIGNAR PRECIO -->
+                            <td>
+
+                                {% if cotizacion["precio"] is not none %}
+
+                                    <p class="ts-precio-actual">
+                                        ${{ "%.2f"|format(cotizacion["precio"]) }} MXN
+                                    </p>
+
+                                {% else %}
+
+                                    <p class="ts-precio-pendiente">
+                                        Sin precio
+                                    </p>
+
+                                {% endif %}
+
+
+                                {% if cotizacion["decision"] == "Pendiente" %}
+
+                                    <form
+                                        action="{{ url_for('asignar_precio', cotizacion_id=cotizacion['id']) }}"
+                                        method="POST"
+                                        class="ts-formulario-precio"
+                                    >
+
+                                        <input
+                                            type="number"
+                                            name="precio"
+                                            min="0.01"
+                                            max="99999999.99"
+                                            step="0.01"
+                                            placeholder="Precio MXN"
+                                            required
+                                            class="ts-input-precio"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="ts-guardar-estado"
+                                        >
+                                            Asignar precio
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <span class="ts-precio-bloqueado">
+                                        Precio confirmado
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ESTADO DE CONTRATACIÓN -->
+                            <td>
+
+                                {% if cotizacion["decision"] == "Aceptada" %}
+
+                                    <span class="ts-decision-aceptada">
+                                        ✓ Contratada
+                                    </span>
+
+                                {% elif cotizacion["decision"] == "Rechazada" %}
+
+                                    <span class="ts-decision-rechazada">
+                                        ✕ Rechazada
+                                    </span>
+
+                                {% elif cotizacion["precio"] is not none %}
+
+                                    <span class="ts-contratacion-espera">
+                                        ◷ Esperando respuesta
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="ts-contratacion-sin-precio">
+                                        Sin propuesta
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="9">
+                                No hay cotizaciones registradas.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

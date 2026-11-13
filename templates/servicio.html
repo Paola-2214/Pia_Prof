@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ servicio.nombre }} | TechSolutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="pagina-inicio">
+
+<header class="ts-header">
+    <a href="/" class="ts-logo">
+        <span class="ts-logo-icono">T<span>+</span></span>
+        TechSolutions
+    </a>
+
+    <nav class="ts-menu">
+        <a href="/">Inicio</a>
+        <a href="/#servicios">Servicios</a>
+        <a href="/#nosotros">Nosotros</a>
+        <a href="/#contacto">Contacto</a>
+    </nav>
+
+    <div class="ts-cuenta">
+        {% if session.get("usuario_id") %}
+            <span class="ts-saludo">
+                Hola, {{ session.get("nombre") }}
+            </span>
+
+            {% if session.get("rol") == "cliente" %}
+                <a href="{{ url_for('panel_cliente') }}" class="ts-enlace">
+                    Mi cuenta
+                </a>
+            {% endif %}
+
+            {% if session.get("rol") == "admin" %}
+                <a href="{{ url_for('administrador') }}" class="ts-enlace">
+                    Panel admin
+                </a>
+            {% endif %}
+
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button class="ts-boton-salir" type="submit">
+                    Salir
+                </button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="ts-enlace">
+                Iniciar sesión
+            </a>
+            <a href="{{ url_for('registro') }}" class="ts-boton-pequeno">
+                Crear cuenta
+            </a>
+        {% endif %}
+    </div>
+</header>
+
+<main class="ts-detalle">
+
+    <section class="ts-detalle-hero">
+
+        <div class="ts-detalle-info">
+            <span class="ts-subtitulo">{{ servicio.categoria }}</span>
+
+            <h1>{{ servicio.nombre }}</h1>
+
+            <p>{{ servicio.descripcion }}</p>
+
+            <a href="{{ url_for('cotizacion', servicio=servicio.nombre) }}" class="ts-boton-principal">
+                Contratar servicio ↗
+            </a>
+
+            <p class="ts-detalle-nota">
+                La contratación se confirmará después de recibir
+                y aceptar una cotización.
+            </p>
+        </div>
+
+        <div class="ts-detalle-imagen-principal">
+            <img src="{{ servicio.imagenes[0] }}"
+                 alt="{{ servicio.nombre }}">
+        </div>
+
+    </section>
+
+    <section class="ts-detalle-contenido">
+
+        <div>
+            <span class="ts-subtitulo">QUÉ INCLUYE</span>
+            <h2>¿Qué ofrecemos?</h2>
+
+            <div class="ts-detalle-lista">
+                {% for elemento in servicio.incluye %}
+                    <div class="ts-detalle-elemento">
+                        <span>✓</span>
+                        <p>{{ elemento }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="ts-detalle-imagen-secundaria">
+            <img src="{{ servicio.imagenes[1] }}"
+                 alt="Detalles del servicio">
+        </div>
+
+    </section>
+
+    <section class="ts-detalle-final">
+        <span class="ts-subtitulo">EMPIEZA TU PROYECTO</span>
+        <h2>¿Necesitas este servicio?</h2>
+        <p>
+            Envíanos tu solicitud y nuestro equipo
+            podrá revisar tus necesidades.
+        </p>
+
+        <a href="{{ url_for('cotizacion', servicio=servicio.nombre) }}" class="ts-boton-principal">
+            Contratar servicio ↗
+        </a>
+    </section>
+
+</main>
+
+<footer class="ts-footer">
+    <strong>TechSolutions</strong>
+    <span>© 2026 · Proyecto académico</span>
+</footer>
+
+</body>
+</html>

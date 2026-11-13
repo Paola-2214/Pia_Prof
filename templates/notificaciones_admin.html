@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notificaciones del administrador | TechSolutions</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-dashboard-body">
+
+<div class="ts-dashboard">
+
+    <!-- MENÚ LATERAL -->
+    <aside class="ts-sidebar">
+
+        <a href="{{ url_for('inicio') }}" class="ts-sidebar-logo">
+            T+ <span>TechSolutions</span>
+        </a>
+
+        <div class="ts-sidebar-grupo">
+
+            <p>GENERAL</p>
+
+            <a href="{{ url_for('administrador') }}">
+                ▦ Dashboard
+            </a>
+
+            <a href="{{ url_for('administrador') }}#solicitudes">
+                ▤ Cotizaciones
+            </a>
+
+            <a href="{{ url_for('notificaciones_admin') }}" class="activo">
+                ♧ Notificaciones
+
+                {% if no_leidas > 0 %}
+                    <span class="ts-notificaciones-contador">
+                        {{ no_leidas }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <a href="{{ url_for('inicio') }}">
+                ⌂ Página principal
+            </a>
+
+        </div>
+
+        <div class="ts-sidebar-abajo">
+
+            <span>Administrador</span>
+
+            <strong>{{ session.get("nombre") }}</strong>
+
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit">
+                    Cerrar sesión ↗
+                </button>
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="ts-dashboard-main">
+
+        <div class="ts-dashboard-superior">
+
+            <div>
+
+                <span class="ts-dashboard-etiqueta">
+                    CENTRO DE NOTIFICACIONES
+                </span>
+
+                <h1>Notificaciones</h1>
+
+                <p>
+                    Consulta las respuestas de los clientes
+                    a las propuestas de TechSolutions.
+                </p>
+
+            </div>
+
+            <span class="ts-dashboard-estado">
+                ● Sistema activo
+            </span>
+
+        </div>
+
+
+        <!-- RESUMEN -->
+        <div class="ts-dashboard-metricas">
+
+            <div class="ts-metrica">
+
+                <span>Notificaciones recibidas</span>
+
+                <strong>{{ avisos|length }}</strong>
+
+                <small>Actividad registrada</small>
+
+            </div>
+
+            <div class="ts-metrica">
+
+                <span>Notificaciones sin leer</span>
+
+                <strong>{{ no_leidas }}</strong>
+
+                <small>Avisos pendientes de revisar</small>
+
+            </div>
+
+        </div>
+
+
+        <!-- LISTA DE NOTIFICACIONES -->
+        <div class="ts-dashboard-seccion">
+
+            <div class="ts-notificaciones-encabezado">
+
+                <div>
+                    <h2>Actividad reciente</h2>
+
+                    <p>
+                        Revisa las decisiones de tus clientes.
+                    </p>
+                </div>
+
+                <span class="ts-notificaciones-resumen">
+                    {{ no_leidas }} sin leer
+                </span>
+
+            </div>
+
+
+            {% if avisos %}
+
+                <div class="ts-notificaciones-lista">
+
+                    {% for aviso in avisos %}
+
+                        <article class="ts-notificacion
+                            {% if aviso['leida'] == 0 %}
+                                ts-notificacion-nueva
+                            {% endif %}
+                        ">
+
+                            <!-- ICONO -->
+                            <div class="ts-notificacion-icono">
+
+                                {% if "rechazada" in aviso["titulo"].lower() %}
+                                    ✕
+                                {% else %}
+                                    ✓
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- CONTENIDO -->
+                            <div class="ts-notificacion-contenido">
+
+                                <div class="ts-notificacion-superior">
+
+                                    <h3>{{ aviso["titulo"] }}</h3>
+
+                                    {% if aviso["leida"] == 0 %}
+
+                                        <span class="ts-notificacion-badge">
+                                            Nueva
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <p>
+                                    {{ aviso["mensaje"] }}
+                                </p>
+
+
+                                <span class="ts-notificacion-fecha">
+                                    {{ aviso["fecha"] }} UTC
+                                </span>
+
+                                {% if aviso["leida"] == 0 %}
+
+                                    <form
+                                        action="{{ url_for('marcar_notificacion_admin_leida', notificacion_id=aviso['id']) }}"
+                                        method="POST"
+                                        class="ts-notificacion-formulario"
+                                    >
+                                        <button type="submit" class="ts-notificacion-leer">
+                                            ✓ Marcar como leída
+                                        </button>
+                                    </form>
+
+                                {% else %}
+
+                                    <span class="ts-notificacion-ya-leida">
+                                        ✓ Leída
+                                    </span>
+
+                                {% endif %}
+
+                                {% if aviso["cotizacion_id"] %}
+
+                                    <a
+                                        href="{{ url_for('administrador') }}#solicitudes"
+                                        class="ts-notificacion-enlace"
+                                    >
+                                        Ver cotización #{{ aviso["cotizacion_id"] }} →
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="ts-notificaciones-vacio">
+
+                    <div class="ts-notificaciones-vacio-icono">
+                        ♧
+                    </div>
+
+                    <h3>Todavía no tienes notificaciones</h3>
+
+                    <p>
+                        Cuando un cliente acepte o rechace una cotización,
+                        aparecerá un aviso aquí.
+                    </p>
+
+                    <a
+                        href="{{ url_for('administrador') }}"
+                        class="ts-boton-ver-detalle"
+                    >
+                        Volver al dashboard →
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

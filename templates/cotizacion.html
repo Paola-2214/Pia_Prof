@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar cotización | TechSolutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="ts-cot-body">
+
+    <header class="ts-cot-header">
+        <a href="/" class="ts-cot-logo">
+            T+ <span>TechSolutions</span>
+        </a>
+
+        <nav class="ts-cot-nav">
+            <a href="/">Inicio</a>
+
+            {% if session.get("usuario_id") %}
+                <span>Hola, {{ session.get("nombre") }}</span>
+
+                {% if session.get("rol") == "admin" %}
+                    <a href="/admin">Panel admin</a>
+                {% endif %}
+
+                <form action="/logout" method="POST">
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            {% else %}
+                <a href="/login">Iniciar sesión</a>
+                <a href="/registro">Crear cuenta</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="ts-cot-contenedor">
+
+        <section class="ts-cot-intro">
+            <span class="ts-cot-etiqueta">TECHSOLUTIONS / SERVICIOS</span>
+
+            <h1>Cuéntanos qué <span>necesitas.</span></h1>
+
+            <p>
+                Solicita una cotización para cualquiera de nuestros
+                servicios tecnológicos. Cuéntanos tu proyecto o problema
+                y nuestro equipo podrá revisar tu solicitud.
+            </p>
+
+            <div class="ts-cot-beneficios">
+                <div>
+                    <strong>01</strong>
+                    <span>Selecciona tu servicio</span>
+                </div>
+
+                <div>
+                    <strong>02</strong>
+                    <span>Describe lo que necesitas</span>
+                </div>
+
+                <div>
+                    <strong>03</strong>
+                    <span>Consulta el estado de tu solicitud</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="ts-cot-panel">
+
+            {% if exito %}
+                <div class="ts-mensaje-exito" role="status">
+                    <h3>✓ ¡Cotización enviada correctamente!</h3>
+                    <p>
+                        Recibimos tu solicitud. Puedes consultar su estado
+                        desde tu cuenta cuando esté disponible el panel de clientes.
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="ts-cot-panel-titulo">
+                <span>FORMULARIO DE SOLICITUD</span>
+                <h2>Solicitar cotización</h2>
+                <p>Completa los siguientes datos para registrar tu solicitud.</p>
+            </div>
+
+            <form action="{{ url_for('cotizacion') }}" method="POST" class="ts-cot-formulario">
+
+                <div class="ts-cot-campo">
+                    <label for="nombre">Nombre completo</label>
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Escribe tu nombre completo"
+                        required
+                    >
+                </div>
+
+                <div class="ts-cot-campo">
+                    <label for="correo">Correo electrónico</label>
+                    <input
+                        type="email"
+                        id="correo"
+                        name="correo"
+                        placeholder="ejemplo@correo.com"
+                        required
+                    >
+                </div>
+
+                <div class="ts-cot-campo">
+                    <label for="servicio">Servicio que necesitas</label>
+
+                    <select id="servicio" name="servicio" required>
+                        <option value="" disabled
+                            {% if not servicio_seleccionado %}selected{% endif %}>
+                            Selecciona un servicio
+                        </option>
+
+                        <option value="Mantenimiento de computadoras"
+                            {% if servicio_seleccionado == "Mantenimiento de computadoras" %}selected{% endif %}>
+                            Mantenimiento de computadoras
+                        </option>
+
+                        <option value="Desarrollo de páginas web"
+                            {% if servicio_seleccionado == "Desarrollo de páginas web" %}selected{% endif %}>
+                            Desarrollo de páginas web
+                        </option>
+
+                        <option value="Instalación y configuración de redes"
+                            {% if servicio_seleccionado == "Instalación y configuración de redes" %}selected{% endif %}>
+                            Instalación y configuración de redes
+                        </option>
+                    </select>
+                </div>
+
+                <div class="ts-cot-campo">
+                    <label for="descripcion">Descripción de tu solicitud</label>
+
+                    <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        rows="6"
+                        placeholder="Explica qué necesitas, cuál es el problema o qué proyecto tienes en mente..."
+                        required
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="ts-cot-enviar">
+                    Enviar cotización
+                    <span>↗</span>
+                </button>
+
+                <p class="ts-cot-aviso">
+                    Tu solicitud quedará registrada en TechSolutions
+                    para su revisión.
+                </p>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <footer class="ts-cot-footer">
+        <span>© TechSolutions</span>
+        <span>Soluciones tecnológicas para personas y empresas.</span>
+    </footer>
+
+</body>
+</html>
